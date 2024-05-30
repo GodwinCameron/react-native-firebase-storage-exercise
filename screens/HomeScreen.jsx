@@ -1,7 +1,23 @@
 import { Pressable, ScrollView, StyleSheet, Text, View, Image } from 'react-native'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import { getAllPosts } from '../services/BucketService'
 
 const HomeScreen = ({navigation}) => {
+
+    const [posts, setPosts] = useState([]);
+
+    useEffect(() => {
+        getAllPosts().then((posts) => {
+            console.log(posts);
+            setPosts(posts);
+        }).catch((error) => {
+            console.error("Error getting posts: ", error);
+        }
+        );
+    }, [])
+
+
+
   return (
     <ScrollView style={styles.container}>
         <Pressable onPress={() => navigation.navigate("Add")}>
@@ -18,6 +34,19 @@ const HomeScreen = ({navigation}) => {
 
             <Text>Image Title</Text>
         </View>
+
+        {posts != [] && posts.map((post) => (
+            <View key={post.id} style={styles.card}>
+                <Image
+                    style={styles.img}
+                    source={{
+                        uri: post.image,
+                    }} />
+
+                <Text>{post.title}</Text>
+            </View>
+        ))
+        }
 
     </ScrollView>
 
